@@ -11,6 +11,15 @@ function HomePage() {
     // Example marker; you can update this array in real-time
     { id: 1, position: { lat: 26.84386, lng: 75.56266 } }
   ]);
+  const [stations, setStations] = useState([]); // <-- New state for stations
+
+  useEffect(() => {
+    // Fetch stations from backend API
+    fetch('/api/stations')
+      .then(res => res.json())
+      .then(data => setStations(data))
+      .catch(err => console.error('Error fetching stations:', err));
+  }, []);
 
   useEffect(() => {
     // Replace with your Socket.IO server URL
@@ -75,6 +84,14 @@ function HomePage() {
         </div>
         <div className="all-stations">
           {/* You can render station info here */}
+          <h2>All Stations</h2>
+          <ul>
+            {stations.map(station => (
+              <li key={station._id || station.id}>
+                {station.name || station._id || station.id}
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Review Modal */}

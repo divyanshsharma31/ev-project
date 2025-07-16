@@ -111,10 +111,13 @@ app.get('/api/stations/:id', async (req, res) => {
   }
 });
 
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
 // Serve index.html for all routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/dist', 'index.html'));
 });
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

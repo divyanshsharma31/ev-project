@@ -1,0 +1,76 @@
+body {
+  font-family: Arial, Helvetica, sans-serif, cursive;
+  margin: 0 auto;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: #faf9f6;
+}
+
+h1 {
+  font-family: cursive;
+  color: #0080fe;
+  /* Remove align-items and justify-content from h1 as body handles overall centering */
+  margin-bottom: 20px; /* Add some space below the h1 */
+}
+
+input {
+  background-color: white;
+  color: #242424;
+  border: 3px solid black;
+  height: 30px;
+  width: 200px;
+  margin-top: 10px;
+  /* Remove justify-content and align-items from input */
+  text-align: center; /* Center placeholder and input text */
+}
+
+input::placeholder {
+  color: black;
+  font-size: medium;
+}
+
+.details {
+  height: 350px;
+  width: 365px;
+  margin-top: 100px;
+  border: 3px groove #000080;
+  background-color: rgba(0, 128, 254, 0.6);
+  border-radius: 7%;
+  padding-top: 15px;
+  font-weight: bold;
+  font-size: large;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+button {
+  cursor: pointer;
+  /* Add some basic styling for the button to match the image, if not already present in your HTML */
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: white;
+  color: black;
+}
+
+.heading {
+  display: flex;
+  justify-items: center;
+  align-items: center;
+}
+
+.container {
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

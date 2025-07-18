@@ -4,11 +4,9 @@ import { io } from 'socket.io-client';
 import "./homepage.css";
 
 const containerStyle = {
-  
   width: '100%',
   height: '60vh'
 };
-
 const initialCenter = { lat: 26.84386, lng: 75.56266 };
 
 function HomePage() {
@@ -16,25 +14,39 @@ function HomePage() {
     { id: 1, position: { lat: 26.84386, lng: 75.56266 } }
   ]);
   const [stations, setStations] = useState([]);
+  const [stationError, setStationError] = useState(null);
 
   useEffect(() => {
     fetch('/api/stations')
-      .then(res => res.json())
-      .then(data => setStations(data))
-      .catch(err => console.error('Error fetching stations:', err));
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch stations: ' + res.status);
+        return res.text();
+      })
+      .then(text => {
+        try {
+          // If response is empty, treat as empty array
+          const data = text ? JSON.parse(text) : [];
+          setStations(Array.isArray(data) ? data : []);
+        } catch (err) {
+          setStations([]);
+          setStationError('Invalid JSON received from server.');
+        }
+      })
+      .catch(err => {
+        setStations([]);
+        setStationError('Could not load stations: ' + err.message);
+        console.error('Error fetching stations:', err);
+      });
   }, []);
 
   useEffect(() => {
     const socket = io('http://localhost:3000');
-
     socket.on('connect', () => {
       console.log('Connected to socket server');
     });
-
     socket.on('updateMarkers', (data) => {
       setMarkers(data);
     });
-
     return () => {
       socket.disconnect();
     };
@@ -44,27 +56,32 @@ function HomePage() {
     <>
       <header>
         <div className="header-content">
-          <h1 className='home_title'>
-            <i className="fas fa-charging-station"></i> EV Station Monitor
-          </h1>
+          <h1 className='home_title'><i className="fas fa-charging-station"></i> EV Station Monitor</h1>
           <div className="user-info">
             <div className="user-input-wrapper">
               <i className="fas fa-user"></i>
-              <input type="text" placeholder="Enter your name" className="username-input" />
+              <input type="text" id="username" placeholder="Enter your name" className="username-input" />
             </div>
           </div>
         </div>
         <div className="status-legend">
-          <div className="legend-item"><span className="status-dot working"></span><span>Working</span></div>
-          <div className="legend-item"><span className="status-dot maintenance"></span><span>Maintenance</span></div>
-          <div className="legend-item"><span className="status-dot busy"></span><span>Busy</span></div>
+          <div className="legend-item">
+            <span className="status-dot working"></span>
+            <span>Working</span>
+          </div>
+          <div className="legend-item">
+            <span className="status-dot maintenance"></span>
+            <span>Maintenance</span>
+          </div>
+          <div className="legend-item">
+            <span className="status-dot busy"></span>
+            <span>Busy</span>
+          </div>
         </div>
       </header>
-
       <div className='container'>
         <div className="map-container">
           <LoadScript googleMapsApiKey="AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg">
-
             <GoogleMap
               mapContainerStyle={containerStyle}
               center={initialCenter}
@@ -76,9 +93,11 @@ function HomePage() {
             </GoogleMap>
           </LoadScript>
         </div>
-
         <div className="all-stations">
           <h2>All Stations</h2>
+          {stationError && (
+            <div className="error-message">{stationError}</div>
+          )}
           <ul>
             {stations.map(station => (
               <li key={station._id || station.id}>
@@ -94,22 +113,25 @@ function HomePage() {
             <form id="reviewForm">
               <input type="hidden" id="stationId" />
               <div className="form-group">
-                <label>Station Status:</label>
+                <label htmlFor="reviewStatus">Station Status:</label>
                 <div className="status-selector">
                   <div className="status-option" data-status="working">
-                    <i className="fas fa-check-circle"></i><span>Working</span>
+                    <i className="fas fa-check-circle"></i>
+                    <span>Working</span>
                   </div>
                   <div className="status-option" data-status="maintenance">
-                    <i className="fas fa-tools"></i><span>Maintenance</span>
+                    <i className="fas fa-tools"></i>
+                    <span>Maintenance</span>
                   </div>
                   <div className="status-option" data-status="busy">
-                    <i className="fas fa-clock"></i><span>Busy</span>
+                    <i className="fas fa-clock"></i>
+                    <span>Busy</span>
                   </div>
                 </div>
               </div>
               <div className="form-group">
-                <label>Your Review:</label>
-                <textarea rows="4" placeholder="Share your experience..."></textarea>
+                <label htmlFor="reviewText">Your Review:</label>
+                <textarea id="reviewText" rows="4" placeholder="Share your experience with this station..."></textarea>
               </div>
               <button type="submit" className="submit-btn">
                 <i className="fas fa-paper-plane"></i> Submit Review

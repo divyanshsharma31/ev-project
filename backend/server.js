@@ -91,11 +91,20 @@ io.on('connection', (socket) => {
 app.get('/api/stations', async (req, res) => {
   try {
     const stations = await Station.find();
+    if (!stations || stations.length === 0) {
+      console.warn('No stations found in the database.');
+    }
     res.json(stations);
   } catch (error) {
     console.error('Error fetching stations:', error);
-    res.status(500).json({ error: 'Error fetching stations' });
+    // Always return valid JSON (empty array) on error
+    res.status(500).json([]);
   }
+});
+
+// Health check route
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
 });
 
 app.get('/api/stations/:id', async (req, res) => {
@@ -111,11 +120,12 @@ app.get('/api/stations/:id', async (req, res) => {
   }
 });
 
+// Serve frontend static files correctly
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-// Serve index.html for all routes
+// Serve index.html for all non-API routes
 app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
 

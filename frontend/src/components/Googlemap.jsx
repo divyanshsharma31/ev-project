@@ -15,15 +15,17 @@ const center = {
 
 function MyMapComponent() {
   return (
-    <LoadScript googleMapsApiKey="AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg">
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={15}
-      >
-        <Marker position={center} />
-      </GoogleMap>
-    </LoadScript>
+    <LoadScript googleMapsApiKey="YOUR_ACTUAL_WORKING_API_KEY">
+  <GoogleMap
+    mapContainerStyle={containerStyle}
+    center={initialCenter}
+    zoom={15}
+  >
+    {markers.map(marker => (
+      <Marker key={marker.id} position={marker.position} />
+    ))}
+  </GoogleMap>
+</LoadScript>
   );
 }
 

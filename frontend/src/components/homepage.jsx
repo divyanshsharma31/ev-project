@@ -5,10 +5,15 @@ import "./homepage.css";
 
 const containerStyle = {
   width: '100%',
-  height: '60vh'
+  height: '73vh'
 };
 const initialCenter = { lat: 26.84386, lng: 75.56266 };
-
+function formatStatus(status) {
+  if (status === "working") return "Working";
+  if (status === "maintenance") return "Under Maintenance";
+  if (status === "busy") return "Busy";
+  return "Unknown";
+}
 function HomePage() {
   const [markers, setMarkers] = useState([
     { id: 1, position: { lat: 26.84386, lng: 75.56266 } }
@@ -93,19 +98,34 @@ function HomePage() {
             </GoogleMap>
           </LoadScript>
         </div>
-        <div className="all-stations">
-          <h2>All Stations</h2>
-          {stationError && (
-            <div className="error-message">{stationError}</div>
-          )}
-          <ul>
-            {stations.map(station => (
-              <li key={station._id || station.id}>
-                {station.name || station._id || station.id}
-              </li>
-            ))}
-          </ul>
+<div className="stations-section">
+  <div className="stations-grid">
+    {stations.map(station => (
+      <div className={`station-card ${station.status}`} key={station._id || station.id}>
+        <h3>{station.name || "Unnamed Station"}</h3>
+        <p><strong>Coordinates:</strong> {station.coordinates || "N/A"}</p>
+        <p><strong>Status:</strong> <span className="status-text">{formatStatus(station.status)}</span></p>
+
+        <h4>Recent Updates</h4>
+        <div className="reviews-list">
+          {(station.reviews || []).slice(0, 3).map((review, index) => (
+            <div className="review-item" key={index}>
+              <span className={`status-badge ${review.status}`}>{formatStatus(review.status)}</span>
+              <p>{review.comment}</p>
+              <p className="review-user">{review.user}</p>
+            </div>
+          ))}
         </div>
+
+        <div className="buttons-row">
+          <button className="review-btn">Submit Review</button>
+          <button className="update-btn">Update Status</button>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
         <div className="modal">
           <div className="modal-content">
             <span className="close">&times;</span>

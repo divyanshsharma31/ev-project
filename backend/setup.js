@@ -13,7 +13,7 @@ const sampleStations = [
     reviews: []
   },
   {
-    name: "Mahapura EV-Station",
+    name: "Rambagh EV-Station",
     location: {
       type: "Point",
       coordinates: [75.8123, 26.9234]  // Mahapura, Jaipur coordinates
@@ -26,6 +26,15 @@ const sampleStations = [
     location: {
       type: "Point",
       coordinates: [75.5627, 26.8439]  // Manipal University Jaipur coordinates
+    },
+    status: "working",
+    reviews: []
+  },
+  {
+    name: "WTP Malviya Nagar Ev-station",
+    location: {
+      type: "Point",
+      coordinates: [75.7637, 26.3459]  // Manipal University Jaipur coordinates
     },
     status: "working",
     reviews: []

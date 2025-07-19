@@ -5,162 +5,67 @@ import "./homepage.css";
 
 const containerStyle = {
   width: '100%',
-  height: '73vh'
+  height: '60vh'
 };
+
 const initialCenter = { lat: 26.84386, lng: 75.56266 };
 
-function formatStatus(status) {
-  if (status === "working") return "Working";
-  if (status === "maintenance") return "Under Maintenance";
-  if (status === "busy") return "Busy";
-  return "Unknown";
-}
-
 function HomePage() {
-  const [markers, setMarkers] = useState([]);
   const [stations, setStations] = useState([]);
-  const [stationError, setStationError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [markers, setMarkers] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [reviewText, setReviewText] = useState('');
   const [username, setUsername] = useState('');
-  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    fetch('/api/stations')
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch stations: ' + res.status);
-        return res.text();
-      })
-      .then(text => {
-        try {
-          const data = text ? JSON.parse(text) : [];
-          const stationsData = Array.isArray(data) ? data : [];
-          setStations(stationsData);
-          
-          // Convert stations to markers for the map
-          const mapMarkers = stationsData.map(station => ({
-            id: station._id,
-            position: {
-              lat: station.location?.coordinates?.[1] || 26.84386,
-              lng: station.location?.coordinates?.[0] || 75.56266
-            },
-            title: station.name,
-            status: station.status
-          }));
-          setMarkers(mapMarkers);
-        } catch (err) {
-          setStations([]);
-          setMarkers([]);
-          setStationError('Invalid JSON received from server.');
-        }
-      })
-      .catch(err => {
-        setStations([]);
-        setMarkers([]);
-        setStationError('Could not load stations: ' + err.message);
-        console.error('Error fetching stations:', err);
-      });
+    loadStations();
   }, []);
 
   useEffect(() => {
-    const newSocket = io('http://127.0.0.1:3000');
-    setSocket(newSocket);
-    
-    newSocket.on('connect', () => {
-      console.log('Connected to socket server');
-    });
-    
-    newSocket.on('stationUpdated', (data) => {
-      setStations(prevStations => {
-        const updatedStations = prevStations.map(station => 
-          station._id === data.stationId 
-            ? { ...station, status: data.status, reviews: data.reviews }
-            : station
-        );
-        
-        // Update markers as well
-        const updatedMarkers = updatedStations.map(station => ({
+    const socket = io(`http://${window.location.hostname}:3000`);
+    socket.on('stationUpdated', loadStations);
+    return () => socket.disconnect();
+  }, []);
+
+  const loadStations = () => {
+    fetch('/api/stations')
+      .then(res => res.json())
+      .then(data => {
+        setStations(data || []);
+        setMarkers(data.map(station => ({
           id: station._id,
           position: {
-            lat: station.location?.coordinates?.[1] || 26.84386,
-            lng: station.location?.coordinates?.[0] || 75.56266
-          },
-          title: station.name,
-          status: station.status
-        }));
-        setMarkers(updatedMarkers);
-        
-        return updatedStations;
-      });
-    });
+            lat: station.location?.coordinates[1] || 26.84386,
+            lng: station.location?.coordinates[0] || 75.56266
+          }
+        })));
+      })
+      .catch(() => setStations([]));
+  };
 
-    newSocket.on('reviewSubmitted', (data) => {
-      if (data.success) {
-        alert('Review submitted successfully!');
-        setIsModalOpen(false);
-        setSelectedStatus('');
-        setReviewText('');
-      }
-    });
-
-    newSocket.on('error', (data) => {
-      alert('Error: ' + data.message);
-    });
-    
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
-
-  const handleReviewClick = (station) => {
+  const openModal = (station) => {
     setSelectedStation(station);
-    setIsModalOpen(true);
-  };
-
-  const handleUpdateStatusClick = (station) => {
-    setSelectedStation(station);
-    setIsModalOpen(true);
-  };
-
-  const handleStatusSelect = (status) => {
-    setSelectedStatus(status);
-  };
-
-  const handleSubmitReview = (e) => {
-    e.preventDefault();
-    
-    if (!username.trim()) {
-      alert('Please enter your name in the header');
-      return;
-    }
-    
-    if (!selectedStatus) {
-      alert('Please select a status');
-      return;
-    }
-
-    if (!selectedStation) {
-      alert('No station selected');
-      return;
-    }
-
-    const reviewData = {
-      stationId: selectedStation._id,
-      status: selectedStatus,
-      text: reviewText.trim(),
-      username: username.trim()
-    };
-
-    socket.emit('updateStationStatus', reviewData);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedStation(null);
+    setModalVisible(true);
     setSelectedStatus('');
     setReviewText('');
+  };
+
+  const submitReview = (e) => {
+    e.preventDefault();
+    if (!selectedStation || !selectedStatus || !username.trim()) {
+      alert("All fields are required.");
+      return;
+    }
+    const socket = io(`http://${window.location.hostname}:3000`);
+    socket.emit('updateStationStatus', {
+      stationId: selectedStation._id,
+      status: selectedStatus,
+      text: reviewText,
+      username: username.trim()
+    });
+    setModalVisible(false);
   };
 
   return (
@@ -171,12 +76,12 @@ function HomePage() {
           <div className="user-info">
             <div className="user-input-wrapper">
               <i className="fas fa-user"></i>
-              <input 
-                type="text" 
-                placeholder="Enter your name" 
-                className="username-input"
+              <input
+                type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your name"
+                className="username-input"
               />
             </div>
           </div>
@@ -196,138 +101,101 @@ function HomePage() {
           </div>
         </div>
       </header>
-      <div className='container'>
-        <div className="map-container">
-          {stationError && (
-            <div style={{ color: 'red', padding: '20px' }}>
-              Error: {stationError}
-            </div>
-          )}
-          {stations.length === 0 && !stationError && (
-            <div style={{ padding: '20px' }}>
-              Loading stations...
-            </div>
-          )}
-          {stations.length > 0 && (
-            <div style={{ marginBottom: '10px', padding: '10px', background: '#e8f5e8' }}>
-              ✅ Found {stations.length} stations - Map should show {markers.length} markers
-            </div>
-          )}
-          <LoadScript googleMapsApiKey="AIzaSyCx2YagW6Y-u3eCoHwL9fGc8931c-kNNTI">
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={initialCenter}
-              zoom={13}
-            >
-              {markers.map(marker => (
-                <Marker 
-                  key={marker.id} 
-                  position={marker.position}
-                  title={marker.title}
-                  icon={{
-                    url: marker.status === 'working' 
-                      ? 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
-                      : marker.status === 'maintenance'
-                      ? 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
-                      : 'https://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
-                  }}
-                  onClick={() => {
-                    const station = stations.find(s => s._id === marker.id);
-                    if (station) handleReviewClick(station);
-                  }}
-                />
-              ))}
-            </GoogleMap>
-          </LoadScript>
-        </div>
-<div className="stations-section">
-  <div className="stations-grid">
-    {stations.map(station => (
-      <div className={`station-card ${station.status}`} key={station._id || station.id}>
-        <h3>{station.name || "Unnamed Station"}</h3>
-        <p><strong>Location:</strong> {station.location?.coordinates ? `${station.location.coordinates[1]}, ${station.location.coordinates[0]}` : "N/A"}</p>
-        <p><strong>Status:</strong> <span className="status-text">{formatStatus(station.status)}</span></p>
 
-        <h4>Recent Updates</h4>
-        <div className="reviews-list">
-          {(station.reviews || []).slice(-3).map((review, index) => (
-            <div className="review-item" key={index}>
-              <span className={`status-badge ${review.status}`}>{formatStatus(review.status)}</span>
-              <p>{review.text}</p>
-              <p className="review-user">- {review.username}</p>
+      <div className="map-container">
+        <LoadScript googleMapsApiKey="AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg">
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={initialCenter}
+            zoom={13}
+          >
+            {markers.map(marker => (
+              <Marker key={marker.id} position={marker.position} />
+            ))}
+          </GoogleMap>
+        </LoadScript>
+      </div>
+
+      <div className="stations-section">
+        <div className="stations-grid">
+          {stations.map(station => (
+            <div className={`station-card ${station.status}`} key={station._id}>
+              <h3>{station.name}</h3>
+              <p><strong>Location:</strong> {station.location?.type || 'Point'}</p>
+              <p><strong>Coordinates:</strong> {station.location?.coordinates?.join(", ")}</p>
+              <p><strong>Status:</strong> {station.status}</p>
+
+              <h4>Recent Reviews</h4>
+              <div className="reviews-list">
+                {(station.reviews || []).slice(0, 3).map((review, index) => (
+                  <div className="review-item" key={index}>
+                    <p><strong>{review.username}</strong></p>
+                    <p>{review.text}</p>
+                    <p>{new Date(review.timestamp).toLocaleString()}</p>
+                    <span className={`status-badge ${review.status}`}>{review.status}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="buttons-row">
+                <button className="review-btn" onClick={() => openModal(station)}>Submit Review</button>
+              </div>
             </div>
           ))}
         </div>
+      </div>
 
-        <div className="buttons-row">
-          <button 
-            className="review-btn"
-            onClick={() => handleReviewClick(station)}
-          >
-            Submit Review
-          </button>
-          <button 
-            className="update-btn"
-            onClick={() => handleUpdateStatusClick(station)}
-          >
-            Update Status
-          </button>
+     {modalVisible && (
+  <div className="modal">
+    <div className="modal-content">
+      <span className="close" onClick={() => setModalVisible(false)}>&times;</span>
+      <h2>🚗 Submit Your Review</h2>
+
+      <div className="form-group">
+        <label className="modal-label">Your Name:</label>
+        <input
+          type="text"
+          className="modal-input"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter your name"
+        />
+      </div>
+
+      <div className="form-group">
+        <label className="modal-label">Select Station Status:</label>
+        <div className="status-options-row">
+          {['working', 'maintenance', 'busy'].map(status => (
+            <button
+  key={status}
+  type="button"
+  className={`status-select-btn ${status} ${selectedStatus === status ? 'selected' : ''}`}
+  onClick={() => setSelectedStatus(status)}
+>
+  {status.charAt(0).toUpperCase() + status.slice(1)}
+</button>
+
+          ))}
         </div>
       </div>
-    ))}
-  </div>
-</div>
 
-        {isModalOpen && (
-          <div className="modal" style={{ display: 'block' }}>
-            <div className="modal-content">
-              <span className="close" onClick={closeModal}>&times;</span>
-              <h2><i className="fas fa-star"></i> Submit Review for {selectedStation?.name}</h2>
-              <form onSubmit={handleSubmitReview}>
-                <div className="form-group">
-                  <label>Station Status:</label>
-                  <div className="status-selector">
-                    <div 
-                      className={`status-option ${selectedStatus === 'working' ? 'selected' : ''}`}
-                      onClick={() => handleStatusSelect('working')}
-                    >
-                      <i className="fas fa-check-circle"></i>
-                      <span>Working</span>
-                    </div>
-                    <div 
-                      className={`status-option ${selectedStatus === 'maintenance' ? 'selected' : ''}`}
-                      onClick={() => handleStatusSelect('maintenance')}
-                    >
-                      <i className="fas fa-tools"></i>
-                      <span>Maintenance</span>
-                    </div>
-                    <div 
-                      className={`status-option ${selectedStatus === 'busy' ? 'selected' : ''}`}
-                      onClick={() => handleStatusSelect('busy')}
-                    >
-                      <i className="fas fa-clock"></i>
-                      <span>Busy</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="reviewText">Your Review:</label>
-                  <textarea 
-                    id="reviewText" 
-                    rows="4" 
-                    placeholder="Share your experience with this station..."
-                    value={reviewText}
-                    onChange={(e) => setReviewText(e.target.value)}
-                  />
-                </div>
-                <button type="submit" className="submit-btn">
-                  <i className="fas fa-paper-plane"></i> Submit Review
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
+      <div className="form-group">
+        <label className="modal-label">Your Review:</label>
+        <textarea
+          className="modal-textarea"
+          value={reviewText}
+          onChange={(e) => setReviewText(e.target.value)}
+          rows="4"
+          placeholder="Share your experience..."
+        ></textarea>
       </div>
+
+      <button onClick={submitReview} className="modal-submit-btn">
+         Submit Review
+      </button>
+    </div>
+  </div>
+)}
     </>
   );
 }

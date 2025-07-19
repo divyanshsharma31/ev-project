@@ -31,7 +31,7 @@ const sampleStations = [
     reviews: []
   },
   {
-    name: "WTP Malviya Nagar Ev-station",
+    name: "WTP Malviya Nagar EV-station",
     location: {
       type: "Point",
       coordinates: [75.7637, 26.3459]  // Manipal University Jaipur coordinates

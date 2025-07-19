@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // MongoDB Connection with error handling
-mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017',
+mongoose.connect(process.env.MONGODB_URL || 'mongodb://127.0.0.1:27017/livecharge',
  {
   useNewUrlParser: true,
   useUnifiedTopology: true

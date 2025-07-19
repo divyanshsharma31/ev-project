@@ -31,10 +31,46 @@ const sampleStations = [
     reviews: []
   },
   {
-    name: "WTP Malviya Nagar Ev-station",
+    name: "WTP Malviya Nagar EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.7637, 26.3459]  // Manipal University Jaipur coordinates
+      coordinates: [75.7637, 26.3459]  // WTP Malviya Nagar coordinates
+    },
+    status: "working",
+    reviews: []
+  },
+  {
+    name: "Mansarovar EV-Station",
+    location: {
+      type: "Point",
+      coordinates: [75.7637, 26.3459]  // Mansarovar coordinates
+    },
+    status: "working",
+    reviews: []
+  },
+  {
+    name: "Sodala EV-Station",
+    location: {
+      type: "Point",
+      coordinates: [75.7637, 26.3459]  // Sodala coordinates
+    },
+    status: "working",
+    reviews: []
+  },
+  {
+    name: "Raja Park EV-Station",
+    location: {
+      type: "Point",
+      coordinates: [75.7637, 26.3459]  // Raja Park coordinates
+    },
+    status: "working",
+    reviews: []
+  },
+  {
+    name: "Gurjar ki Thadi EV-Station",
+    location: {
+      type: "Point",
+      coordinates: [75.7637, 26.3459]  // Gurjar ki Thadi coordinates
     },
     status: "working",
     reviews: []

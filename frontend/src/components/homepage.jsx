@@ -37,8 +37,8 @@ function HomePage() {
         setMarkers(data.map(station => ({
           id: station._id,
           position: {
-            lat: station.location?.coordinates[1] || 26.84386,
-            lng: station.location?.coordinates[0] || 75.56266
+            lat: station.location?.coordinates[1] || 75.78519822471735,
+            lng: station.location?.coordinates[0] || 26.912455350001334
           }
         })));
       })
@@ -70,21 +70,15 @@ function HomePage() {
 
   return (
     <>
+
       <header>
         <div className="header-content">
-          <h1 className='home_title'><i className="fas fa-charging-station"></i> EV Station Monitor</h1>
-          <div className="user-info">
-            <div className="user-input-wrapper">
-              <i className="fas fa-user"></i>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your name"
-                className="username-input"
-              />
-            </div>
-          </div>
+    <div className="logo-container">
+      <img src="/image/logo.png" alt="LiveCharge Logo" className="header-logo" />
+    </div>
+    <h1 className='home_title'>
+      <i className="fas fa-charging-station"></i> EV Station Monitor
+    </h1>
         </div>
         <div className="status-legend">
           <div className="legend-item">
@@ -106,8 +100,8 @@ function HomePage() {
         <LoadScript googleMapsApiKey="AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg">
           <GoogleMap
             mapContainerStyle={containerStyle}
-            center={initialCenter}
-            zoom={13}
+            center={{lat: 26.9124, lng: 75.7873}}
+            zoom={13.5}
           >
             {markers.map(marker => (
               <Marker key={marker.id} position={marker.position} />

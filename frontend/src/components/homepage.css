@@ -6,21 +6,46 @@ body {
 }
 
 header {
-  background: #2d3e50;
-  color: white;
-  padding: 20px;
+  background:rgba(0, 0, 0, 0.922);
+  color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+
+ border-bottom: 2px solid #4caf50;
+ height: 140px;
+ 
+}
+.brand-name{
+  font-weight: bolder;
+  color: #00ffcc;
+  display: inline;
+}
+.logo-container .header-logo{
+  height:140px;
+  margin-top: 40px;
+  width:160px;
+  border: none;
+  
 }
 
+.header-content h1{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color:#00FFD1;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 600px;
+  
+}
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.username-input {
-  padding: 8px;
-  border-radius: 4px;
-  border: none;
+    
+    height:80px;
 }
 
 .status-legend {
@@ -52,7 +77,7 @@ header {
 }
 
 .status-dot.busy {
-  background-color: #007bff;
+  background-color: red;
 }
 
 

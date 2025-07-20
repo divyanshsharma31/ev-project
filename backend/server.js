@@ -34,6 +34,83 @@ app.get('/api/stations', async (req, res) => {
   }
 });
 
+// Vote on a review
+app.post('/api/stations/:stationId/reviews/:reviewId/vote', async (req, res) => {
+  try {
+    const { stationId, reviewId } = req.params;
+    const { username, voteType } = req.body;
+
+    if (!username || !voteType || !['upvote', 'downvote'].includes(voteType)) {
+      return res.status(400).json({ error: 'Invalid vote data' });
+    }
+
+    const station = await Station.findById(stationId);
+    if (!station) {
+      return res.status(404).json({ error: 'Station not found' });
+    }
+
+    const review = station.reviews.id(reviewId);
+    if (!review) {
+      return res.status(404).json({ error: 'Review not found' });
+    }
+
+    // Check if user has already voted
+    const existingVoteIndex = review.voters.findIndex(voter => voter.username === username);
+    
+    if (existingVoteIndex !== -1) {
+      const existingVote = review.voters[existingVoteIndex];
+      
+      // If user is voting the same way, remove their vote
+      if (existingVote.voteType === voteType) {
+        review.voters.splice(existingVoteIndex, 1);
+        if (voteType === 'upvote') {
+          review.upvotes = Math.max(0, review.upvotes - 1);
+        } else {
+          review.downvotes = Math.max(0, review.downvotes - 1);
+        }
+      } else {
+        // User is changing their vote
+        review.voters[existingVoteIndex].voteType = voteType;
+        if (voteType === 'upvote') {
+          review.upvotes += 1;
+          review.downvotes = Math.max(0, review.downvotes - 1);
+        } else {
+          review.downvotes += 1;
+          review.upvotes = Math.max(0, review.upvotes - 1);
+        }
+      }
+    } else {
+      // New vote
+      review.voters.push({ username, voteType });
+      if (voteType === 'upvote') {
+        review.upvotes += 1;
+      } else {
+        review.downvotes += 1;
+      }
+    }
+
+    await station.save();
+    
+    // Emit the updated station data to all clients
+    io.emit('stationUpdated', {
+      stationId: station._id,
+      status: station.status,
+      reviews: station.reviews
+    });
+
+    res.json({ 
+      success: true, 
+      upvotes: review.upvotes, 
+      downvotes: review.downvotes,
+      userVote: review.voters.find(voter => voter.username === username)?.voteType || null
+    });
+
+  } catch (error) {
+    console.error('Vote error:', error);
+    res.status(500).json({ error: 'Failed to process vote' });
+  }
+});
+
 // Serve Frontend
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 app.get(/^\/(?!api).*/, (req, res) => {

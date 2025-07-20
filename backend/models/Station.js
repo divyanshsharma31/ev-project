@@ -17,7 +17,22 @@ const reviewSchema = new mongoose.Schema({
   timestamp: {
     type: Date,
     default: Date.now
-  }
+  },
+  upvotes: {
+    type: Number,
+    default: 0
+  },
+  downvotes: {
+    type: Number,
+    default: 0
+  },
+  voters: [{
+    username: String,
+    voteType: {
+      type: String,
+      enum: ['upvote', 'downvote']
+    }
+  }]
 });
 
 const stationSchema = new mongoose.Schema({

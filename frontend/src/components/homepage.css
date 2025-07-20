@@ -48,6 +48,35 @@ header {
     height:80px;
 }
 
+/* User Info Section */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.current-user {
+  color: #00FFD1;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.change-user-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.change-user-btn:hover {
+  background: #0056b3;
+}
+
 .status-legend {
   display: flex;
   justify-content: center;
@@ -154,6 +183,57 @@ header {
 .status-badge.busy {
   background-color: #cce5ff;
   color: #007bff;
+}
+
+/* Vote Section Styling */
+.vote-section {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.vote-btn {
+  background: #f8f9fd;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+  min-width: 50px;
+  justify-content: center;
+}
+
+.vote-btn:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+}
+
+.vote-btn.upvote.active {
+  background: #d4f4d4;
+  color: #28a745;
+  border-color: #28a745;
+}
+
+.vote-btn.downvote.active {
+  background: #ffe0e0;
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.vote-btn.upvote:hover {
+  background: #e8f5e8;
+  border-color: #28a745;
+}
+
+.vote-btn.downvote:hover {
+  background: #ffeaea;
+  border-color: #dc3545;
 }
 
 .buttons-row {

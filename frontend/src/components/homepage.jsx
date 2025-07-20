@@ -18,6 +18,7 @@ function HomePage() {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [reviewText, setReviewText] = useState('');
   const [username, setUsername] = useState('');
+  const [currentUser, setCurrentUser] = useState('Guest'); // Track current user for voting
 
   useEffect(() => {
     loadStations();
@@ -50,6 +51,12 @@ function HomePage() {
     setModalVisible(true);
     setSelectedStatus('');
     setReviewText('');
+    // Pre-fill username if current user is set and not Guest
+    if (currentUser && currentUser !== 'Guest') {
+      setUsername(currentUser);
+    } else {
+      setUsername('');
+    }
   };
 
   const submitReview = (e) => {
@@ -58,6 +65,7 @@ function HomePage() {
       alert("All fields are required.");
       return;
     }
+    setCurrentUser(username.trim()); // Set the current user
     const socket = io(`http://${window.location.hostname}:3000`);
     socket.emit('updateStationStatus', {
       stationId: selectedStation._id,
@@ -66,6 +74,35 @@ function HomePage() {
       username: username.trim()
     });
     setModalVisible(false);
+  };
+
+  const handleVote = async (stationId, reviewId, voteType) => {
+    if (!currentUser || currentUser === 'Guest') {
+      alert('Please submit a review first to vote on reviews!');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/stations/${stationId}/reviews/${reviewId}/vote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: currentUser,
+          voteType: voteType
+        })
+      });
+
+      const result = await response.json();
+      if (!result.success) {
+        alert(result.error || 'Failed to vote');
+      }
+      // The socket.io update will refresh the UI automatically
+    } catch (error) {
+      console.error('Vote error:', error);
+      alert('Failed to vote');
+    }
   };
 
   return (
@@ -79,6 +116,20 @@ function HomePage() {
     <h1 className='home_title'>
       <i className="fas fa-charging-station"></i> EV Station Monitor
     </h1>
+    <div className="user-info">
+      <span className="current-user">User: {currentUser}</span>
+      <button 
+        className="change-user-btn" 
+        onClick={() => {
+          const newUser = prompt('Enter your username:', currentUser);
+          if (newUser && newUser.trim()) {
+            setCurrentUser(newUser.trim());
+          }
+        }}
+      >
+        Change User
+      </button>
+    </div>
         </div>
         <div className="status-legend">
           <div className="legend-item">
@@ -121,14 +172,34 @@ function HomePage() {
 
               <h4>Recent Reviews</h4>
               <div className="reviews-list">
-                {(station.reviews || []).slice(0, 3).map((review, index) => (
-                  <div className="review-item" key={index}>
-                    <p><strong>{review.username}</strong></p>
-                    <p>{review.text}</p>
-                    <p>{new Date(review.timestamp).toLocaleString()}</p>
-                    <span className={`status-badge ${review.status}`}>{review.status}</span>
-                  </div>
-                ))}
+                {(station.reviews || []).slice(0, 3).map((review, index) => {
+                  const userVote = review.voters?.find(voter => voter.username === currentUser)?.voteType;
+                  return (
+                    <div className="review-item" key={review._id || index}>
+                      <p><strong>{review.username}</strong></p>
+                      <p>{review.text}</p>
+                      <p>{new Date(review.timestamp).toLocaleString()}</p>
+                      <span className={`status-badge ${review.status}`}>{review.status}</span>
+                      
+                      <div className="vote-section">
+                        <button 
+                          className={`vote-btn upvote ${userVote === 'upvote' ? 'active' : ''}`}
+                          onClick={() => handleVote(station._id, review._id, 'upvote')}
+                          title="Upvote this review"
+                        >
+                          👍 {review.upvotes || 0}
+                        </button>
+                        <button 
+                          className={`vote-btn downvote ${userVote === 'downvote' ? 'active' : ''}`}
+                          onClick={() => handleVote(station._id, review._id, 'downvote')}
+                          title="Downvote this review"
+                        >
+                          👎 {review.downvotes || 0}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="buttons-row">

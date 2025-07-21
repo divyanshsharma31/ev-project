@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import React, { useEffect, useState, useRef } from 'react';
+import { GoogleMap, LoadScript, Marker, InfoWindow} from '@react-google-maps/api';
 import { io } from 'socket.io-client';
 import "./homepage.css";
 
@@ -19,7 +19,7 @@ function HomePage() {
   const [reviewText, setReviewText] = useState('');
   const [username, setUsername] = useState('');
   const [currentUser, setCurrentUser] = useState('Guest'); // Track current user for voting
-
+  const [selectedMarker, setSelectedMarker] = useState(null);
   useEffect(() => {
     loadStations();
   }, []);
@@ -35,13 +35,16 @@ function HomePage() {
       .then(res => res.json())
       .then(data => {
         setStations(data || []);
-        setMarkers(data.map(station => ({
-          id: station._id,
-          position: {
-            lat: station.location?.coordinates[1] || 75.78519822471735,
-            lng: station.location?.coordinates[0] || 26.912455350001334
-          }
-        })));
+        setMarkers(data.map(station => {
+  const coords = station.location?.coordinates;
+  const lng = (coords && typeof coords[0] === 'number') ? coords[0] : 75.766768;
+  const lat = (coords && typeof coords[1] === 'number') ? coords[1] : 26.880985;
+
+  return {
+    id: station._id,
+    position: { lat, lng }
+  };
+}));
       })
       .catch(() => setStations([]));
   };
@@ -154,9 +157,36 @@ function HomePage() {
             center={{lat: 26.9124, lng: 75.7873}}
             zoom={13.5}
           >
-            {markers.map(marker => (
-              <Marker key={marker.id} position={marker.position} />
-            ))}
+            {markers.map(marker => {
+  const stationDetails = stations.find(s => s._id === marker.id);
+
+  return (
+    <Marker
+      key={marker.id}
+      position={marker.position}
+        onClick={() => setSelectedMarker({ position: marker.position, station: stationDetails })}
+        onMouseOver={() => setSelectedMarker({ position: marker.position, station: stationDetails })}
+         onCloseClick={() => setSelectedMarker(null)}
+         onMouseOut={() => {
+  setTimeout(() => {
+    setSelectedMarker(null);
+  }, 1000);  // 500ms delay before hiding
+}}
+    />
+  );
+})}
+{selectedMarker && (
+  <InfoWindow
+    position={selectedMarker.position}
+  options={{ disableAutoPan: true, closeBoxURL: '' }}  // Optional: remove close button
+  >
+    <div>
+      <h3>{selectedMarker.station?.name}</h3>
+      <p><strong>Status:</strong> {selectedMarker.station?.status}</p>
+      <p><strong>Coordinates:</strong> {selectedMarker.station?.location?.coordinates?.join(", ")}</p>
+    </div>
+  </InfoWindow>
+)}
           </GoogleMap>
         </LoadScript>
       </div>

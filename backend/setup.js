@@ -4,10 +4,10 @@ const Station = require('./models/Station');
 
 const sampleStations = [
   {
-    name: "Ajmer Road EV-Station",
+    name: "Ajmer Road (DCM) EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.7893, 26.9124]  // Ajmer Road, Jaipur coordinates
+      coordinates: [75.7462, 26.8936]  // Ajmer Road, Jaipur coordinates
     },
     status: "working",
     reviews: []
@@ -16,7 +16,7 @@ const sampleStations = [
     name: "Rambagh EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.8123, 26.9234]  // Mahapura, Jaipur coordinates
+      coordinates: [75.8145, 26.8930]  // Mahapura, Jaipur coordinates
     },
     status: "working",
     reviews: []
@@ -25,7 +25,7 @@ const sampleStations = [
     name: "Manipal University Jaipur EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.5627, 26.8439]  // Manipal University Jaipur coordinates
+      coordinates: [75.5657, 26.8403]  // Manipal University Jaipur coordinates
     },
     status: "working",
     reviews: []
@@ -34,7 +34,7 @@ const sampleStations = [
     name: "WTP Malviya Nagar EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.7637, 26.3459]  // WTP Malviya Nagar coordinates
+      coordinates: [75.8050, 26.8546]  // WTP Malviya Nagar coordinates
     },
     status: "working",
     reviews: []
@@ -43,7 +43,7 @@ const sampleStations = [
     name: "Mansarovar EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.7637, 26.3459]  // Mansarovar coordinates
+      coordinates: [75.7571, 26.8577]  // Mansarovar coordinates
     },
     status: "working",
     reviews: []
@@ -52,7 +52,7 @@ const sampleStations = [
     name: "Sodala EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.7637, 26.3459]  // Sodala coordinates
+      coordinates: [78.7728, 26.9024]  // Sodala coordinates
     },
     status: "working",
     reviews: []
@@ -61,7 +61,7 @@ const sampleStations = [
     name: "Raja Park EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.7637, 26.3459]  // Raja Park coordinates
+      coordinates: [75.8373, 26.9032]  // Raja Park coordinates
     },
     status: "working",
     reviews: []
@@ -70,7 +70,7 @@ const sampleStations = [
     name: "Gurjar ki Thadi EV-Station",
     location: {
       type: "Point",
-      coordinates: [75.7637, 26.3459]  // Gurjar ki Thadi coordinates
+      coordinates: [75.766768, 26.880985]  // Gurjar ki Thadi coordinates
     },
     status: "working",
     reviews: []

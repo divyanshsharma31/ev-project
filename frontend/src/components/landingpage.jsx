@@ -25,7 +25,7 @@ function LandingPage() {
     return (
     <div className = "container">
         <div className = "heading">
-            <img src = "././public/image/whitelog.png" height = "275px" width = "360px" alt = "logo" />
+            <img src = "./image/whitelog.png" height = "275px" width = "360px" alt = "logo" />
         </div>
         <div className = "tag">
             {/* <h3>Know Before You Go</h3> */}

@@ -25,10 +25,10 @@ function LandingPage() {
     return (
     <div className = "container">
         <div className = "heading">
-            <h1>LiveCharge</h1>
+            <img src = "././public/image/whitelog.png" height = "275px" width = "360px" alt = "logo" />
         </div>
         <div className = "tag">
-            <h3>Know Before You Go</h3>
+            {/* <h3>Know Before You Go</h3> */}
         </div>
         <div className = "details">
             <form onSubmit = {handleSubmit}>

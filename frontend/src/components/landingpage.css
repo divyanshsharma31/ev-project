@@ -1,28 +1,41 @@
-body {
-  font-family: Arial, Helvetica, sans-serif, cursive;
+.landing-page body {
+  font-family: Arial, Helvetica, sans-serif, cursive, 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0 auto;
   padding: 0;
   height: 100vh;
   width: 100%;
-  background-color: #faf9f6;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-h1 {
+/* h1 {
   font-family: cursive;
   color: #0080fe;
-  /* Remove align-items and justify-content from h1 as body handles overall centering */
-  margin-bottom: 20px; /* Add some space below the h1 */
-}
+  /* Remove align-items and justify-content from h1 as body handles overall centering 
+}*/
 
 input {
-  background-color: white;
-  color: #242424;
-  border: 3px solid black;
-  height: 30px;
-  width: 200px;
-  margin-top: 10px;
-  /* Remove justify-content and align-items from input */
-  text-align: center; /* Center placeholder and input text */
+  width: 100%;
+  padding: 15px 12px 12px 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  background: transparent;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+label {
+  /* position: absolute; */
+  left: 12px;
+  top: 15px;
+  color: #666;
+  font-size: 16px;
+  pointer-events: none;
+  transition: all 0.3s ease;
 }
 
 input::placeholder {
@@ -31,35 +44,39 @@ input::placeholder {
 }
 
 .details {
-  height: 350px;
-  width: 365px;
-  margin-top: 100px;
-  border: 3px groove #000080;
-  background-color: rgba(0, 128, 254, 0.6);
-  border-radius: 7%;
-  padding-top: 15px;
-  font-weight: bold;
-  font-size: large;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 400px;
+  transition: transform 0.3s ease;
+}
+.details:hover {
+  transform: translateY(-2px);
 }
 
 button {
-  cursor: pointer;
-  /* Add some basic styling for the button to match the image, if not already present in your HTML */
-  background-color: black;
-  color: white;
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
-  padding: 10px 20px;
-  margin-top: 20px;
-  border-radius: 5px;
+  border-radius: 8px;
+  padding: 15px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
 }
-
 button:hover {
-  background-color: white;
-  color: black;
+ transform: translateY(-1px);
+ box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+button:active {
+  transform: translateY(0);
 }
 
 .heading {

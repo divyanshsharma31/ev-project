@@ -36,7 +36,7 @@ function LandingPage() {
                 <div className = "feature-item">
                     <div className = "feature-icon">🗺️</div>
                     <h3>Google Maps Integration</h3>
-                    <p>Visualize fictitious EV stations with interactive maps</p>
+                    <p>Visualize EV stations with interactive maps</p>
                 </div>
                 <div className = "feature-item">
                     <div className = "feature-icon">⚡</div>
@@ -54,6 +54,9 @@ function LandingPage() {
                     <p>Upvote/Downvote system for community-driven insights</p>
                 </div>
             </div>
+        </div>
+        <div className = "tagline">
+            <h3>Login to Know Before You Go</h3>
         </div>
         <div className = "details">
             <form onSubmit = {handleSubmit}>

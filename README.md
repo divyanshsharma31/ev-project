@@ -63,6 +63,6 @@ This project reinforced understanding of:
 
 ## Authors 
 **Chitraksh Sharma**  
-3rd Year Computer Science and Engineering (CSE)Student, Swami Keshvanand Institute of Technology, Management and Gramothan (SKIT), Jaipur   
+3rd Year Computer Science and Engineering (CSE) Student, Swami Keshvanand Institute of Technology, Management and Gramothan (SKIT), Jaipur   
 **Divyansh Sharma**  
 3rd Year Computer and Communication Engineering (CCE) Student, Manipal University Jaipur (MUJ)

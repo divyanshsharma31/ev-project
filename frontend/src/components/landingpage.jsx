@@ -30,6 +30,31 @@ function LandingPage() {
         <div className = "tag">
             {/* <h3>Know Before You Go</h3> */}
         </div>
+        <div className = "features-section">
+            <h2>Why Choose LiveCharge?</h2>
+            <div className = "features-grid">
+                <div className = "feature-item">
+                    <div className = "feature-icon">🗺️</div>
+                    <h3>Google Maps Integration</h3>
+                    <p>Visualize fictitious EV stations with interactive maps</p>
+                </div>
+                <div className = "feature-item">
+                    <div className = "feature-icon">⚡</div>
+                    <h3>Real-time Updates</h3>
+                    <p>Get instant updates on station availability and status</p>
+                </div>
+                <div className = "feature-item">
+                    <div className = "feature-icon">⭐</div>
+                    <h3>User Reviews & Status</h3>
+                    <p>Read and share reviews and status updates for EV stations</p>
+                </div>
+                <div className = "feature-item">
+                    <div className = "feature-icon">👍</div>
+                    <h3>Community Engagement</h3>
+                    <p>Upvote/Downvote system for community-driven insights</p>
+                </div>
+            </div>
+        </div>
         <div className = "details">
             <form onSubmit = {handleSubmit}>
                 <label htmlFor="">Username</label> <br />

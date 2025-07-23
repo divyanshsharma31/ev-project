@@ -7,6 +7,7 @@ const containerStyle = {
   borderRadius: '10px',
   margin: '20px 0'
 };
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const center = {
   lat: 26.8467,   // Replace with your preferred latitude
@@ -15,12 +16,12 @@ const center = {
 
 function MyMapComponent() {
   return (
-    <LoadScript googleMapsApiKey="AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg">
-  <GoogleMap
-    mapContainerStyle={containerStyle}
-    center={initialCenter}
-    zoom={15}
-  >
+    <LoadScript googleMapsApiKey={apiKey}>
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={initialCenter}
+        zoom={15}
+      >
     {markers.map(marker => (
       <Marker key={marker.id} position={marker.position} />
     ))}

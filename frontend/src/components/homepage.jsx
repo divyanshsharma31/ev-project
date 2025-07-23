@@ -11,6 +11,7 @@ const containerStyle = {
 const initialCenter = { lat: 26.84386, lng: 75.56266 };
 
 function HomePage() {
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const [stations, setStations] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -151,7 +152,7 @@ function HomePage() {
       </header>
 
       <div className="map-container">
-        <LoadScript googleMapsApiKey="AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg">
+        <LoadScript googleMapsApiKey={apiKey}>
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={{lat: 26.9124, lng: 75.7873}}

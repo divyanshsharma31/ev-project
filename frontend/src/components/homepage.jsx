@@ -156,7 +156,7 @@ function HomePage() {
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={{lat: 26.9124, lng: 75.7873}}
-            zoom={13.5}
+            zoom={13.2}
           >
             {markers.map(marker => {
   const stationDetails = stations.find(s => s._id === marker.id);

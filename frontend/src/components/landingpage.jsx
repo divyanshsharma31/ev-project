@@ -18,7 +18,7 @@ function LandingPage() {
                 // alert("Login successful")
                 navigate('/home');
             } else {
-                alert("Aiee Sasur");
+                alert("Incorrect Login Credentials");
             }
         }, 1000)
     }

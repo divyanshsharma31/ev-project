@@ -1,22 +1,19 @@
-# ===== Stage 1: Build React frontend =====
+# === Stage 1: Build frontend ===
 FROM node:18 AS frontend-builder
 
 WORKDIR /app
+
 COPY frontend/ ./frontend/
 RUN cd frontend && npm install && npm run build
 
-# ===== Stage 2: Set up backend =====
+# === Stage 2: Backend with built frontend ===
 FROM node:18
 
 WORKDIR /app
 
-# Copy backend source
 COPY backend/ ./backend/
+COPY --from=frontend-builder /app/frontend/dist ./backend/public/
 
-# Copy frontend build output to backend/public
-COPY --from=frontend-builder /app/frontend/build ./backend/public/
-
-# Install backend dependencies
 RUN cd backend && npm install
 
 EXPOSE 5000

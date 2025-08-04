@@ -1,21 +1,23 @@
-# Step 1: Build frontend (React)
-FROM node:18 AS frontend
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm install
-COPY frontend/ ./
-RUN npm run build
+# ===== Stage 1: Build React frontend =====
+FROM node:18 AS frontend-builder
 
-# Step 2: Build backend (Express)
-FROM node:18 AS backend
 WORKDIR /app
-COPY backend/package*.json ./backend/
+COPY frontend/ ./frontend/
+RUN cd frontend && npm install && npm run build
+
+# ===== Stage 2: Set up backend =====
+FROM node:18
+
+WORKDIR /app
+
+# Copy backend source
+COPY backend/ ./backend/
+
+# Copy frontend build output to backend/public
+COPY --from=frontend-builder /app/frontend/build ./backend/public/
+
+# Install backend dependencies
 RUN cd backend && npm install
 
-# Step 3: Copy frontend build to backend
-COPY --from=frontend /app/frontend/build ./backend/build
-COPY backend/ ./backend
-
-WORKDIR /app/backend
 EXPOSE 5000
-CMD ["node", "server.js"]
+CMD ["node", "backend/server.js"]
